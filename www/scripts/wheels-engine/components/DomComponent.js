@@ -1,5 +1,9 @@
 import Component from './Component';
 import Transformation from '../Transformation';
+import css from '../css';
+
+var ELEMENT_CLASS = 'dom-component';
+css.createStyle(ELEMENT_CLASS, '')
 
 class DomComponent {
 	/**
@@ -52,6 +56,8 @@ class DomComponent {
 			break;
 		}
 
+		e.classList.add(ELEMENT_CLASS);
+
 		return e;
 	}
 
@@ -84,13 +90,11 @@ class DomComponent {
 
 		if (oldTransformation) {
 			// Start a CSS animation to move from oldT to newT
-			
+			css.animateTransform(e, oldTransformation, newTransformation, 1 / args.frequency);
 		} else {
 			// Just set to newT
-			css.transform(e, newTransformation);
+			css.setTransform(e, newTransformation);
 		}
-
-		
 	}
 
 	render(args) {
