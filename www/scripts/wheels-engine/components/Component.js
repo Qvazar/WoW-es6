@@ -1,9 +1,11 @@
 export default class Component {
 	constructor() {
+		this.scene = null;
 		this.entity = null;
 	}
 
-	init(entity) {
+	init(scene, entity) {
+		this.scene = scene;
 		this.entity = entity;
 	}
 

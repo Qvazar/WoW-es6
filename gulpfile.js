@@ -21,7 +21,7 @@ var config = {
 //            'www/lib/curl/dist/debug/curl.js',
             'www/lib/curl/dist/curl/curl.js',
 //            'www/lib/curl/src/curl/plugin/domReady.js',
-            'www/lib/lazy.js/lazy.js',
+            //'www/lib/lazy.js/lazy.js',
             'www/lib/requestAnimationFrame-polyfill/requestAnimationFrame.js'
         ]
     },
@@ -43,6 +43,7 @@ var config = {
             js: 'build/dist/www/scripts'
         }
     },
+    /*
     jslint: (function() {
         var opts = {
             dev: {
@@ -67,6 +68,7 @@ var config = {
 
         return opts;
     }()),
+    */
     uglify: {
 
     },
@@ -127,7 +129,17 @@ gulp.task('copy', function () {
         .pipe(gulp.dest(config.dest.dist.images));
 });
 
-gulp.task('es6', function() {
+// gulp.task('es6', function() {
+//     gulp.src(config.src.js)
+//         .pipe(sourcemaps.init())
+//         .pipe(es6traceur({
+//             modules:'amd'
+//         }))
+//         .pipe(sourcemaps.write())
+//         .pipe(gulp.dest(config.dest.dev.js))
+// });
+
+gulp.task('js', function() {
     gulp.src(config.src.js)
         .pipe(sourcemaps.init())
         .pipe(es6traceur({
@@ -135,6 +147,8 @@ gulp.task('es6', function() {
         }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest.dev.js))
+        .pipe(uglify())
+        .pipe(gulp.dest(config.dest.dist.js));
 });
 
 // gulp.task('compass', function () {

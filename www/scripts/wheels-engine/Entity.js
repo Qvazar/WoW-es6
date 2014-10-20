@@ -3,12 +3,17 @@ import {create as transformationFactory} from './Transformation';
 
 class Entity {
   constructor() {
-    this.game = null;
     this.parent = null;
     this.components = this.components || {};
     this.entities = this.entities || {};
     this.msgbus = msgbusFactory();
     this.transformation = transformationFactory();
+    this.scene = null;
+  }
+
+  init(scene, parent) {
+    this.scene = scene;
+    this.parent = parent;
   }
 
   dispose() {
@@ -25,7 +30,7 @@ class Entity {
     this.msgbus.dispose();
     this.msgbus = null;
     this.parent = null;
-    this.game = null;
+    this.scene = null;
   }
   
 	update(args) {
@@ -55,7 +60,7 @@ class Entity {
       }
       var c = namedComponents[cn];
       this.components[cn] = c;
-      c.init(this);
+      c.init(this.scene, this);
     }
   }
 
@@ -66,7 +71,7 @@ class Entity {
       }
       var c = namedEntities[cn];
       this.entities[cn] = c;
-      c.parent = this;
+      c.init(this.scene, this);
     }
   }
 

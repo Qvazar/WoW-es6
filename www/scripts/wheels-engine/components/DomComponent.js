@@ -22,10 +22,11 @@ class DomComponent {
 		this.__element = null;
 		this.__deltaTransform = null;
 		this.__oldEntityTransform = null;
+		this.__renderFn = null;
 	}
 
-	init(entity) {
-		super(entity);
+	init(scene, entity) {
+		super(scene, entity);
 
 		this.__element = this.createElement();
 		entity.msgbus.set('dom:element', () => this.__element);
@@ -90,19 +91,22 @@ class DomComponent {
 
 		if (oldTransformation) {
 			// Start a CSS animation to move from oldT to newT
-			css.animateTransform(e, oldTransformation, newTransformation, 1 / args.frequency);
+			this.__renderFn = () => {
+				css.animateTransform(e, oldTransformation, newTransformation, 1 / args.frequency);
+			}
 		} else {
 			// Just set to newT
-			css.setTransform(e, newTransformation);
+			this.__renderFn = () => {
+				css.setTransform(e, newTransformation);
+			}
 		}
 	}
 
 	render(args) {
-		// var deltaTransform = this.__deltaTransform * args.alpha,
-		// 	absoluteTransform = this.__oldEntityTransform.add(deltaTransform),
-		// 	e = this.__element;
-
-
+		if (this.__renderFn) {
+			this.__renderFn();
+			this.__renderFn = null;
+		}
 	}
 }
 

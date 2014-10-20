@@ -3,6 +3,7 @@ import Entity from './Entity';
 class Scene extends Entity {
 	constructor(...args) {
 		super(...args);
+		this.scene = this;
 	}
 	
 	enter() {
