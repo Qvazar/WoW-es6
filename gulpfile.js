@@ -28,7 +28,7 @@ var config = {
     dest: {
         dev: {
             html: 'build/dev/www',
-            scss: 'build/dev/www/style',
+            css: 'build/dev/www/style',
             fonts: 'build/dev/www/fonts',
             lib: 'build/dev/www/lib',
             images: 'build/dev/www/images',
@@ -36,7 +36,7 @@ var config = {
         },
         dist: {
             html: 'build/dist/www',
-            scss: 'build/dist/www/style',
+            css: 'build/dist/www/style',
             fonts: 'build/dist/www/fonts',
             lib: 'build/dist/www/lib',
             images: 'build/dist/www/images',
@@ -90,6 +90,9 @@ var config = {
         style: 'expanded',
         require: ['sass-globbing'],
         import_path: 'lib'
+    },
+    sass {
+
     }
 };
 
@@ -149,6 +152,16 @@ gulp.task('js', function() {
         .pipe(gulp.dest(config.dest.dev.js))
         .pipe(uglify())
         .pipe(gulp.dest(config.dest.dist.js));
+});
+
+gulp.task('css', function() {
+    gulp.src(config.src.scss)
+        .pipe(sourcemaps.init())
+        .pipe(sass(config.sass))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.dest.dev.css))
+        .pipe(minifyCss())
+        .pipe(gulp.dest(config.dest.dist.css));
 });
 
 // gulp.task('compass', function () {
