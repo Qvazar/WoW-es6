@@ -1,0 +1,7 @@
+#game {
+	* {
+		@include transform-style('preserve-3d');
+	}
+}
+
+#import "viewport";
