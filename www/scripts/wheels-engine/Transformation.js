@@ -39,6 +39,15 @@ class Transformation {
 
 		return Transformation.create(x, y, r, s);
 	}
+
+	negate() {
+		var x = this.x * -1,
+			y = this.y * -1,
+			r = this.r * -1,
+			s = this.s * -1;
+
+		return Transformation.create(x, y, r, s);
+	}
 }
 
 import createFactory from './ObjectPool';

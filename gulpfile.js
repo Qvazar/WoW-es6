@@ -91,7 +91,7 @@ var config = {
         require: ['sass-globbing'],
         import_path: 'lib'
     },
-    sass {
+    sass: {
 
     }
 };

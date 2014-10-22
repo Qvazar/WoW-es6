@@ -36,5 +36,7 @@ class Viewport {
 	}
 }
 
+Viewport.create = (...args) => new Viewport(...args);
+
 export default Viewport;
-export const create = (...args) => new Viewport(...args);
+export const create = Viewport.create;
