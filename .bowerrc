@@ -1,5 +1,4 @@
 {
 	"directory":"www/lib",
-	"timeout":120000,
-	"strict-ssl":false
+	"timeout":120000
 }

@@ -25,4 +25,7 @@ class RafHeart extends Heart {
 	}
 }
 
+RafHeart.create = () => new RafHeart();
+
 export default RafHeart;
+export const create = RafHeart.create;
