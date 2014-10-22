@@ -93,10 +93,11 @@
         	require = {
 			    //baseUrl: 'scripts'
 			    paths: {
-			    	"engine": "wow-engine"
+			    	"engine": "wheels-engine"
 			    }
 			};
         </script>
-        <script data-main="scripts/main" src="scripts/lib/requirejs/require.js"></script>
+        <script type="text/javascript" src="scripts/lib/traceur-runtime/traceur-runtime.js"></script>
+        <script type="text/javascript" src="scripts/lib/requirejs/require.js" data-main="scripts/main"></script>
     </body>
 </html>
