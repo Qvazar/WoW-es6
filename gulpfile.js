@@ -146,11 +146,11 @@ gulp.task('js', function() {
     gulp.src(config.src.js)
         .pipe(sourcemaps.init())
         .pipe(es6traceur({
-            modules:'amd'
+            modules:'instantiate'
         }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest.dev.js))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(gulp.dest(config.dest.dist.js));
 });
 
