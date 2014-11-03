@@ -32,6 +32,22 @@ class Entity {
     this.parent = null;
     this.scene = null;
   }
+
+  clone() {
+    var e = Entity.create(),
+        components = {};
+
+    e.transformation = this.transformation;
+
+    for (var cName in this.components) if (this.components.hasOwnProperty(cName)) {
+        var component = this.components[cName];
+        components[cName] = component.clone();
+    }
+
+    e.addComponents(components);
+    
+    return e;
+  }
   
 	update(args) {
     for (var c of this.components) {
@@ -102,9 +118,9 @@ class Entity {
   }
 }
 
-Entity.create = createFactory(Entity);
-
 import createFactory from './ObjectPool';
+
+Entity.create = createFactory(Entity);
 
 export default Entity;
 export const create = Entity.create;
