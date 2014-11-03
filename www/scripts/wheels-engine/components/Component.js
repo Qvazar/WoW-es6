@@ -10,7 +10,12 @@ export default class Component {
 	}
 
 	dispose() {
-		this.entity = entity;
+		this.entity = null;
+		this.scene = null;
+	}
+
+	clone() {
+		throw { msg: 'Not implemented' };
 	}
 
 	update(args) {

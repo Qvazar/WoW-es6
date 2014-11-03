@@ -39,6 +39,11 @@ class DomComponent {
 		this.__element = null;
 	}
 
+	clone() {
+		var c = DomComponent.create(this.settings);
+		return c;
+	}
+
 	createElement() {
 		var e,
 			settingsElement = this.settings.element;

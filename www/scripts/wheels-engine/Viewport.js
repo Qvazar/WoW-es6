@@ -8,6 +8,8 @@ function createHtml() {
 	viewport.classList.add('viewport');
 	root.classList.add('viewport-root');
 	viewport.appendChild(root);
+
+	return viewport;
 }
 
 class Viewport {
