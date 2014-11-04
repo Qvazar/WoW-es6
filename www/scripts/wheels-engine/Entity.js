@@ -113,6 +113,10 @@ class Entity {
     }
   }
 
+  getComponent(cmpName) {
+    return this.components[cmpName];
+  }
+
   get(key) {
     return this.msgbus.get(key);
   }
