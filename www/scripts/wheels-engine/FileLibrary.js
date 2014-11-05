@@ -1,18 +1,5 @@
 import Ajax from './Ajax';
 
-function parsePackage(packageDesc, arrayBuffer) {
-	var files = {};
-
-	for (var filepath in packageDesc.files) if (packageDesc.files.hasOwnProperty(filepath)) {
-		var index = packageDesc.files[filepath].index;
-		var length = packageDesc.files[filepath].length;
-
-		files[filepath] = arrayBuffer.slice(index, index+length);
-	}
-
-	return files;
-}
-
 class FileLibrary() {
 	constructor() {
 		this.files = {};
@@ -45,6 +32,15 @@ class FileLibrary() {
 						Ajax.getArrayBuffer(packageDesc.packageUrl)
 							.then((arrayBuffer) => {
 
+								for (var filepath in packageDesc.files) if (packageDesc.files.hasOwnProperty(filepath)) {
+									var fileDesc = packageDesc.files[filepath],
+										index = fileDesc.index,
+										length = fileDesc.length;
+
+									files[filepath] = arrayBuffer.slice(index, index + length);
+								}
+
+								resolve();
 							})
 							.catch(reject);
 

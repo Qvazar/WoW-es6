@@ -7,7 +7,9 @@ var gulp = require('gulp'),
     //es6module = require('gulp-es6-module-transpiler'),
     //es6 = require('gulp-es6-transpiler'),
     es6traceur = require('gulp-traceur'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    spawn = require('gulp-spawn'),
+    rename = require('gulp-rename');
 
 // Config
 var config = {
@@ -143,7 +145,7 @@ gulp.task('copy', function () {
 // });
 
 gulp.task('js', function() {
-    gulp.src(config.src.js)
+    return gulp.src(config.src.js)
         .pipe(sourcemaps.init())
         .pipe(es6traceur({
             modules:'instantiate'
@@ -170,6 +172,18 @@ gulp.task('css', function() {
 //         .pipe(minifyCss(config.minifyCss))
 //         .pipe(gulp.dest(config.dest.dist.scss))
 // });
+
+gulp.task('audio', function() {
+    return gulp.src(['www/audio/*.wav'])
+        .pipe(spawn({
+            cmd: 'ffmpeg',
+            args: '-loglevel error -i pipe:0 -f mp3 -write_xing 0 -id3v2_version 0 -'.split(' ')
+        }))
+        .pipe(rename({
+            extname: '.mp3'
+        }))
+        .pipe(gulp.dest('build/dev/www/audio/'));
+});
 
 gulp.task('default', ['libs', 'jslint', 'copy', 'compass']);
 
