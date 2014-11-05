@@ -1,5 +1,5 @@
 import Component from './Component';
-import SoundManager from '../SoundManager';
+import config from '../config';
 
 class SoundOnEventComponent extends Component {
 
@@ -21,11 +21,10 @@ class SoundOnEventComponent extends Component {
 	}
 
 	play() {
-		var e = this.entity.getComponent(this.settings.component).element;
-		if (e) {
-			e.addEventListener("animationend", this.stop);
-			e.classList.add(this.settings.animationName);
-		}
+		config.soundManager.play(
+			this.settings.sound,
+			this.settings.volume,
+			this.entity.transformation);
 	}
 }
 

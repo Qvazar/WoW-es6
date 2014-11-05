@@ -8,7 +8,7 @@ export default {
 		"components": {
 			"descriptor": DescriptorComponent.create("222"),
 			"sprite": DomSpriteComponent.create({"sprite": '222-body', "css": {"z-index": 0} })
-		}
+		},
 		"entities": {
 			"turret": {
 				"components": {
@@ -19,7 +19,7 @@ export default {
 						"component": "cannon-sprite",
 						"animationName": "default-cannon-animation"
 					}),
-					"shoot-sound": SoundOnEventComponent.create({"event": 'shoot', sound: '222-cannon'})
+					"shoot-sound": SoundOnEventComponent.create({"event": 'shoot', sound: 'sounds/222-cannon.ogg'})
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 import EntityFactory from './EntityFactory';
-import AudioManager from './AudioManager';
+import SoundManager from './SoundManager';
 
 /**
  * config:
@@ -7,15 +7,15 @@ import AudioManager from './AudioManager';
  */	
 function setup(config) {
 	setupEntityFactory.call(this, config.entities);
-	setupAudio.call(this, config.audio);
+	setupSound.call(this, config.sound);
 }
 
 function setupEntityFactory(entityCfg) {
 	this.entityFactory = EntityFactory.create(componentsCfg);
 }
 
-function setupAudio(audioCfg) {
-	this.audioManager = AudioManager.create(audioCfg);
+function setupAudio(soundCfg) {
+	this.soundManager = SoundManager.create(soundCfg);
 }
 
 var config = {

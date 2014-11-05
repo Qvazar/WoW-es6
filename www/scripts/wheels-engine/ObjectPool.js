@@ -17,6 +17,13 @@ class ObjectPool {
 				origDispose();
 				this.pool.push(o);
 			}
+
+			if (!o.use) {
+				o.use = (fn) => {
+					fn(o);
+					o.dispose();
+				}
+			}
 		}
 
 		return o;
@@ -25,7 +32,7 @@ class ObjectPool {
 
 function createPooledFactory(ctor) {
 	var pool = new ObjectPool(ctor);
-	return pool.get;	
+	return pool.get;
 }
 
 export default createPooledFactory;

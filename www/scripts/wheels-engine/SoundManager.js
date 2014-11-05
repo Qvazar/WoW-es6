@@ -1,13 +1,15 @@
-import Ajax from './ajax';
-import ObjectPool from './ObjectPool';
+import Ajax from './Ajax';
+import createObjectPool from './ObjectPool';
 import Transformation from './Transformation';
 
 class Sound {
-	constructor(audioBuffer, context) {
+	constructor(audioBuffer, context, destination) {
 		this.audioBuffer = audioBuffer;
 		this.context = context;
 		this.volume = 1;
 		this.position = Transformation.create();
+		this.loop = false;
+		this.destination = destination;
 	}
 
 	dispose() {
@@ -15,6 +17,7 @@ class Sound {
 		this.context = null;
 		this.volume = 1;
 		this.position = null;
+		this.destination = null;
 	}
 
 	play() {
@@ -23,32 +26,43 @@ class Sound {
 				gainNode = context.createGain(),
 				pannerNode = context.createPanner();
 
-			bufferSourceNode.buffer = audioBuffer;
+			bufferSourceNode.buffer = this.audioBuffer;
+			bufferSourceNode.loop = this.loop;
 
 			gainNode.gain.value = this.volume;
-			pannerNode.setPosition(this.position.x, this.position.y, 0);
+
+			if (this.position) {
+				pannerNode.setPosition(this.position.x, this.position.y, 0);
+			}
 
 			bufferSourceNode.connect(gain);
 			gainNode.connect(panner);
-			pannerNode.connect(context.destination);
+			pannerNode.connect(this.destination);
 
 			bufferSourceNode.onended = () => {
 				pannerNode.disconnect();
 				gainNode.disconnect();
 				bufferSource.disconnect();
 
+				this.stop = () => {};
+
 				resolve();
 			};
 
+			this.stop = () => { bufferSourceNode.stop(); };
 			bufferSourceNode.start();
 		});
 	}
+
+	stop() {
+
+	}
 }
 
-Sound.create = ObjectPool.create(Sound);
+Sound.create = createObjectPool(Sound);
 
 class SoundManager {
-	constructor(cfg) {
+	constructor() {
 		var AudioContext = (window.AudioContext || window.webkitAudioContext);
 
 		if (!AudioContext) {
@@ -56,7 +70,19 @@ class SoundManager {
 		}
 
 		this.context = new AudioContext();
+		this.gainNode = this.context.createGain();
+		this.destination = this.gainNode;
 		this.audioBuffers = {};
+
+		this.gainNode.connect(this.context.destination);
+	}
+
+	set volume(value) {
+		this.gainNode.gain.value = value;
+	}
+
+	get volume() {
+		return this.gainNode.gain.value;
 	}
 
 	load(...soundFiles) {
@@ -66,7 +92,7 @@ class SoundManager {
 				if (this.audioBuffers[soundFile]) {
 					resolve(Sound.create(this.audioBuffers[soundFile], this.context));
 				} else {
-					Ajax.get(soundFile, 'arraybuffer')
+					Ajax.get('arraybuffer', soundFile)
 						.then((arrayBuffer) => {
 
 							this.context.decodeAudioData(
@@ -91,7 +117,7 @@ class SoundManager {
 			//TODO logging
 		}
 
-		return Sound.create(audioBuffer, this.context);
+		return Sound.create(audioBuffer, this.context, this.destinationNode);
 	}
 
 	play(soundFile, volume, position) {
