@@ -1,13 +1,17 @@
 import EntityFactory from './EntityFactory';
 import SoundManager from './SoundManager';
+import FileLibrary from './FileLibrary';
+import SpriteManager from './SpriteManager';
 
 /**
  * config:
  *	components: component config
  */	
 function setup(config) {
-	setupEntityFactory.call(this, config.entities);
+	setupFiles.call(this, config.files);
 	setupSound.call(this, config.sound);
+	setupSprites.call(this, config.sprites);
+	setupEntityFactory.call(this, config.entities);
 }
 
 function setupEntityFactory(entityCfg) {
@@ -16,6 +20,14 @@ function setupEntityFactory(entityCfg) {
 
 function setupAudio(soundCfg) {
 	this.soundManager = SoundManager.create(soundCfg);
+}
+
+function setupFiles(filesCfg) {
+	this.files = FileLibrary.create(filesCfg);
+}
+
+function setupSprites(cfg) {
+	this.sprites = SpriteManager.create(cfg);
 }
 
 var config = {

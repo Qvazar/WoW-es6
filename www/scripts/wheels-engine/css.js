@@ -73,7 +73,16 @@ export const animateTransform = function(element, from, to, duration) {
 	element.style[vAnimationProp] = `${animationName} ${duration}s linear`;
 }
 
+export const setProperty = function(element, property, value) {
+	if (typeof value === 'number') {
+		value += 'px';
+	}
+
+	element.style[vendorProperty(property)] = value;
+}
+
 export default {
 	setTransform,
-	animateTransform
+	animateTransform,
+	setProperty
 };

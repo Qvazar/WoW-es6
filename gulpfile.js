@@ -9,7 +9,10 @@ var gulp = require('gulp'),
     es6traceur = require('gulp-traceur'),
     sourcemaps = require('gulp-sourcemaps'),
     spawn = require('gulp-spawn'),
-    rename = require('gulp-rename');
+    rename = require('gulp-rename'),
+    metadata = require('../gulp-stream-meta'),
+    concatBinary = require('../gulp-concat-binary'),
+    filter = require('gulp-filter');
 
 // Config
 var config = {
@@ -173,16 +176,20 @@ gulp.task('css', function() {
 //         .pipe(gulp.dest(config.dest.dist.scss))
 // });
 
-gulp.task('audio', function() {
-    return gulp.src(['www/audio/*.wav'])
+gulp.task('package-binaries', function() {
+    var audioFilter = filter('www/audio/**');
+
+    return gulp.src(['www/audio/**/*', 'www/sprites/**/*'], { base:'www', buffer: false })
+        .pipe(audioFilter)
         .pipe(spawn({
             cmd: 'ffmpeg',
             args: '-loglevel error -i pipe:0 -f mp3 -write_xing 0 -id3v2_version 0 -'.split(' ')
         }))
-        .pipe(rename({
-            extname: '.mp3'
-        }))
-        .pipe(gulp.dest('build/dev/www/audio/'));
+        .pipe(rename({extname: '.mp3'}))
+        .pipe(audioFilter.restore())
+        .pipe(concatBinary('package.dat', { map: 'package.map.json' }))
+        .pipe(gulp.dest('build/dev/www/data/'))
+        .pipe(gulp.dest('build/dist/www/data/'));
 });
 
 gulp.task('default', ['libs', 'jslint', 'copy', 'compass']);

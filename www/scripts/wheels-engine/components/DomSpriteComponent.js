@@ -1,6 +1,9 @@
 import Component from './Component';
 import Transformation from '../Transformation';
 import css from '../css';
+import config from '../config';
+
+var sprites = config.sprites;
 
 var ELEMENT_CLASS = 'dom-sprite-component';
 css.createStyle(ELEMENT_CLASS, '')
@@ -26,6 +29,7 @@ class DomSpriteComponent extends Component {
 		this.__deltaTransform = null;
 		this.__oldEntityTransform = null;
 		this.__renderFn = null;
+		this.__spriteIndex = 0;
 	}
 
 	init(scene, entity) {
@@ -119,6 +123,15 @@ class DomSpriteComponent extends Component {
 				css.setTransform(e, newTransformation);
 			}
 		}
+
+		var spriteIndex = this.__spriteIndex,
+			sprite = sprites.getSprite(this.settings.sprites[spriteIndex]);
+
+		this.spriteIndex = (spriteIndex + 1) % this.settings.sprites.length;
+
+		css.setProperty(e, 'background-image', `url(${sprite.url})`);
+		css.setProperty(e, 'width', sprite.width);
+		css.setProperty(e, 'height', sprite.height);
 	}
 
 	render(args) {
