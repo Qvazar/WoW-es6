@@ -9,6 +9,12 @@ class Entity {
     this.msgbus = msgbusFactory();
     this.transformation = transformationFactory();
     this.scene = null;
+
+    this.msgbus.on('*', (msg, ...args) => {
+      for (var e in this.entities) {
+        this.entities[e].msgbus.send(msg, ...args);
+      }
+    });
   }
 
   init(scene, parent) {

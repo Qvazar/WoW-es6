@@ -22,6 +22,15 @@ class MessageBus {
 				l(...args);
 			}
 		}
+
+		ls = this.listeners['*'];
+
+		if (ls) {
+			for (var l of ls) {
+				args.shift(msg);
+				l(...args);
+			}
+		}
 	}
 
 	on(msg, cb) {
