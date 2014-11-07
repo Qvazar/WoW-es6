@@ -1,6 +1,8 @@
-import Ajax from './Ajax';
+import config from './config';
 import createObjectPool from './ObjectPool';
 import Transformation from './Transformation';
+
+var files = config.files;
 
 class Sound {
 	constructor(audioBuffer, context, destination) {
@@ -92,7 +94,7 @@ class SoundManager {
 				if (this.audioBuffers[soundFile]) {
 					resolve(Sound.create(this.audioBuffers[soundFile], this.context));
 				} else {
-					Ajax.get('arraybuffer', soundFile)
+					files.getArrayBuffer(soundFile + '.mp3')
 						.then((arrayBuffer) => {
 
 							this.context.decodeAudioData(

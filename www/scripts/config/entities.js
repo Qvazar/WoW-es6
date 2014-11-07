@@ -12,14 +12,14 @@ export default {
 		"entities": {
 			"turret": {
 				"components": {
-					"turret-sprite": DomSpriteComponent.create({"sprite": '222-turret', "css": {"z-index": 2} }),
-					"cannon-sprite": DomSpriteComponent.create({"sprite": '222-cannon', "css": {"z-index": 1} }),
+					"turret-sprite": DomSpriteComponent.create({"sprites": ['222/222-turret'], "css": {"z-index": 2} }),
+					"cannon-sprite": DomSpriteComponent.create({"sprites": ['222/222-cannon'], "css": {"z-index": 1} }),
 					"shoot-animation": DomAnimateOnEventComponent.create({
 						"event": "shoot",
 						"component": "cannon-sprite",
 						"animationName": "default-cannon-animation"
 					}),
-					"shoot-sound": SoundOnEventComponent.create({"event": 'shoot', sound: 'sounds/222-cannon.ogg'})
+					"shoot-sound": SoundOnEventComponent.create({"event": 'shoot', sound: '222/222-cannon'})
 				}
 			}
 		}

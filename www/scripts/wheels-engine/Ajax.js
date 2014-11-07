@@ -11,6 +11,10 @@ export default {
 		return this.get('arraybuffer', url);
 	},
 
+	getBlob(url) {
+		return this.get('blob', url);	
+	},
+
 	getJson(url) {
 		return this.get('json', url);
 	},
