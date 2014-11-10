@@ -10,7 +10,6 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     spawn = require('gulp-spawn'),
     rename = require('gulp-rename'),
-    metadata = require('../gulp-stream-meta'),
     concatBinary = require('../gulp-concat-binary'),
     filter = require('gulp-filter');
 
@@ -177,9 +176,9 @@ gulp.task('css', function() {
 // });
 
 gulp.task('package-binaries', function() {
-    var audioFilter = filter('www/audio/**');
+    var audioFilter = filter('audio/**/*');
 
-    return gulp.src(['www/audio/**/*', 'www/sprites/**/*'], { base:'www', buffer: false })
+    return gulp.src(['www/audio/**/*', 'www/sprites/**/*'], { base:'www' })
         .pipe(audioFilter)
         .pipe(spawn({
             cmd: 'ffmpeg',
