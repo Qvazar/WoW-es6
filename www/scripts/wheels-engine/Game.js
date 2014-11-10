@@ -7,7 +7,7 @@ class Game {
 	// }
 	constructor(settings) {
 		this.msgbus = msgbusFactory();
-		this.settings = settings;
+		this.settings = settings || {};
 		this.__scenes = [];
 		this.__updateArgs = {};
 		this.__renderArgs = {};
@@ -21,11 +21,11 @@ class Game {
 
 		var updateArgs = this.__updateArgs,
 			renderArgs = this.__renderArgs,
-			lastUpdateTime = 0,
-			updateDeltaMs = 1000 / this.__settings.updateFreq,
-			now = Date.now();
+			updateDeltaMs = 1000 / this.settings.updateFreq,
+			now = Date.now(),
+			lastUpdateTime = now;
 
-		updateArgs.frequency = this.__settings.updateFreq;
+		updateArgs.frequency = this.settings.updateFreq;
 		updateArgs.step = 0;
 
 		renderArgs.step = 0;
@@ -33,12 +33,16 @@ class Game {
 		heart.onPulse(() => {
 			now = Date.now();
 
-			while (now - lastUpdateTime % updateDeltaMs) {
+			var updateCount = Math.floor((now - lastUpdateTime) / updateDeltaMs);
+			while (updateCount-- > 0) {
 				updateArgs.step += 1;
-				this.update(updateArgs);				
+				console.log('Update step ' + updateArgs.step);
+				this.update(updateArgs);
+				lastUpdateTime = now;
 			}
 
 			renderArgs.step += 1;
+			console.log('Render step ' + renderArgs.step);
 
 			this.render(renderArgs);
 		});
@@ -77,5 +81,7 @@ class Game {
 	}
 }
 
+Game.create = (...args) => new Game(...args);
+
 export default Game;
-export const create = () => new Game();
+export const create = Game.create;

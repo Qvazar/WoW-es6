@@ -1,6 +1,6 @@
-import Game from 'engine/Game';
-import Viewport from 'engine/Viewport';
-import RafHeart from 'engine/RafHeart';
+import Game from 'wheels-engine/Game';
+import Viewport from 'wheels-engine/Viewport';
+import RafHeart from 'wheels-engine/RafHeart';
 
 export default () => {
 	var viewport = Viewport.create();

@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "requirejs": "~2.1.15",
-    "traceur-runtime": "~0.0.72"
+    "traceur-runtime": "~0.0.72",
+    "es6-module-loader": "~0.9.4"
   }
 }

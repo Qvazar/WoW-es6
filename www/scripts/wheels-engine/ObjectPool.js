@@ -32,7 +32,7 @@ class ObjectPool {
 
 function createPooledFactory(ctor) {
 	var pool = new ObjectPool(ctor);
-	return pool.get;
+	return ObjectPool.prototype.get.bind(pool);
 }
 
 export default createPooledFactory;

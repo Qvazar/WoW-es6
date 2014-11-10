@@ -11,7 +11,10 @@ var gulp = require('gulp'),
     spawn = require('gulp-spawn'),
     rename = require('gulp-rename'),
     concatBinary = require('../gulp-concat-binary'),
-    filter = require('gulp-filter');
+    filter = require('gulp-filter'),
+    gzip = require('gulp-gzip'),
+    less = require('gulp-less'),
+    autoprefixer = require('gulp-autoprefixer');
 
 // Config
 var config = {
@@ -23,10 +26,13 @@ var config = {
         js: ['www/scripts/**/*.js', 'www/scripts/**/*.json'],
         libs: [
 //            'www/lib/curl/dist/debug/curl.js',
-            'www/lib/curl/dist/curl/curl.js',
+            //'www/lib/curl/dist/curl/curl.js',
 //            'www/lib/curl/src/curl/plugin/domReady.js',
             //'www/lib/lazy.js/lazy.js',
-            'www/lib/requestAnimationFrame-polyfill/requestAnimationFrame.js'
+            //'www/lib/requestAnimationFrame-polyfill/requestAnimationFrame.js'
+            //'www/lib/traceur-runtime/traceur-runtime.js'
+            'www/lib/traceur/traceur.js',
+            'www/lib/es6-module-loader/dist/es6-module-loader.src.js'
         ]
     },
     dest: {
@@ -94,9 +100,6 @@ var config = {
         style: 'expanded',
         require: ['sass-globbing'],
         import_path: 'lib'
-    },
-    sass: {
-
     }
 };
 
@@ -108,8 +111,8 @@ gulp.task('clean', function () {
 });
 
 gulp.task('libs', function() {
-    gulp.src(config.src.libs)
-        .pipe(concat('lib.js'))
+    return gulp.src(config.src.libs, { base: 'www/lib'} )
+        //.pipe(concat('lib.js'))
         .pipe(gulp.dest(config.dest.dev.lib))
         .pipe(uglify())
         .pipe(gulp.dest(config.dest.dist.lib));
@@ -146,22 +149,30 @@ gulp.task('copy', function () {
 //         .pipe(gulp.dest(config.dest.dev.js))
 // });
 
+gulp.task('html', function() {
+    return gulp.src(config.src.html)
+        .pipe(gulp.dest(config.dest.dev.html))
+        .pipe(minifyHtml(config.minifyHtml))
+        .pipe(gulp.dest(config.dest.dist.html));
+});
+
 gulp.task('js', function() {
     return gulp.src(config.src.js)
+        .pipe(gulp.dest(config.dest.dev.js))
         .pipe(sourcemaps.init())
         .pipe(es6traceur({
             modules:'instantiate'
         }))
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.dest.dev.js))
         //.pipe(uglify())
         .pipe(gulp.dest(config.dest.dist.js));
 });
 
 gulp.task('css', function() {
-    gulp.src(config.src.scss)
+    return gulp.src('www/style/main.less')
         .pipe(sourcemaps.init())
-        .pipe(sass(config.sass))
+        .pipe(less({ paths: [] }))
+        .pipe(autoprefixer())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest.dev.css))
         .pipe(minifyCss())
@@ -177,6 +188,7 @@ gulp.task('css', function() {
 
 gulp.task('package-binaries', function() {
     var audioFilter = filter('audio/**/*');
+    var gzipFilter = filter('*.dat');
 
     return gulp.src(['www/audio/**/*', 'www/sprites/**/*'], { base:'www' })
         .pipe(audioFilter)
@@ -188,10 +200,14 @@ gulp.task('package-binaries', function() {
         .pipe(audioFilter.restore())
         .pipe(concatBinary('package.dat', { map: 'package.map.json' }))
         .pipe(gulp.dest('build/dev/www/data/'))
+        .pipe(gulp.dest('build/dist/www/data/'))
+        .pipe(gzipFilter)
+        .pipe(gzip({ gzipOptions: { level: 9 } }))
+        .pipe(gulp.dest('build/dev/www/data/'))
         .pipe(gulp.dest('build/dist/www/data/'));
 });
 
-gulp.task('default', ['libs', 'jslint', 'copy', 'compass']);
+gulp.task('default', ['libs', 'html', 'css', 'js', 'package-binaries']);
 
 //#gulp.task 'watch', ['default'], ->
 // gulp.task('watch', function () {

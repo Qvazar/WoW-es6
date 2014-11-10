@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="">
     <head>
         <meta charset="utf-8">
         <title></title>
@@ -89,15 +89,22 @@
             ga('create','UA-XXXXX-X');ga('send','pageview');
         </script>
         -->
-        <script type="text/javascript">
+        <!--script type="text/javascript">
         	require = {
 			    //baseUrl: 'scripts'
 			    paths: {
 			    	"engine": "wheels-engine"
 			    }
 			};
+        </script-->
+        <script type="text/javascript" src="lib/traceur/traceur.js"></script>
+        <script type="text/javascript" src="lib/es6-module-loader/dist/es6-module-loader.src.js"></script>
+        <script type="text/javascript">
+            System.baseURL = '/scripts/';
+            System.import('main').then(function(main) {
+                main.default();
+            });
         </script>
-        <script type="text/javascript" src="scripts/lib/traceur-runtime/traceur-runtime.js"></script>
-        <script type="text/javascript" src="scripts/lib/requirejs/require.js" data-main="scripts/main"></script>
+        <!--script type="text/javascript" src="scripts/lib/requirejs/require.js" data-main="scripts/main"></script-->
     </body>
 </html>
