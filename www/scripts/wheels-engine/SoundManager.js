@@ -1,20 +1,21 @@
-import config from './config';
+import files from 'di/files';
 import createObjectPool from './ObjectPool';
 import Transformation from './Transformation';
 
-var files = config.files;
+var noop = () => {};
 
 class Sound {
 	constructor(audioBuffer, context, destination) {
 		this.audioBuffer = audioBuffer;
 		this.context = context;
+		this.destination = destination;
 		this.volume = 1;
 		this.position = Transformation.create();
 		this.loop = false;
-		this.destination = destination;
 	}
 
 	dispose() {
+		this.stop();
 		this.audioBuffer = null;
 		this.context = null;
 		this.volume = 1;
@@ -46,7 +47,7 @@ class Sound {
 				gainNode.disconnect();
 				bufferSource.disconnect();
 
-				this.stop = () => {};
+				this.stop = noop;
 
 				resolve();
 			};
@@ -56,9 +57,7 @@ class Sound {
 		});
 	}
 
-	stop() {
-
-	}
+	stop: noop
 }
 
 Sound.create = createObjectPool(Sound);
@@ -92,7 +91,7 @@ class SoundManager {
 			return new Promise((resolve, reject) => {
 
 				if (this.audioBuffers[soundFile]) {
-					resolve(Sound.create(this.audioBuffers[soundFile], this.context));
+					resolve(Sound.create(this.audioBuffers[soundFile], this.context, this.destination));
 				} else {
 					files.getArrayBuffer(soundFile + '.mp3')
 						.then((arrayBuffer) => {
@@ -102,7 +101,7 @@ class SoundManager {
 								(audioBuffer) => {
 									this.audioBuffers[soundFile] = audioBuffer;
 
-									resolve(Sound.create(audioBuffer, this.context));
+									resolve(Sound.create(audioBuffer, this.context, this.destination));
 								},
 								reject);
 
@@ -111,15 +110,6 @@ class SoundManager {
 				}
 			});
 		}));
-	}
-
-	getSound(soundFile) {
-		var audioBuffer = this.audioBuffers[soundFile];
-		if (!audioBuffer) {
-			//TODO logging
-		}
-
-		return Sound.create(audioBuffer, this.context, this.destinationNode);
 	}
 
 	play(soundFile, volume, position) {

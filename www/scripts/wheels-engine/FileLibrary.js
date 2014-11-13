@@ -14,58 +14,87 @@ class FileLibrary {
 	}
 
 	getBlob(filepath) {
-		// TODO log 'file not found'
-		var blob = this.files[filepath];
-		return blob;
+		return new Promise((resolve, reject) => {
+			var blob = this.files[filepath];
+
+			if (blob) {
+				resolve(blob);
+			} else {
+				this.loadFiles(filepath)
+				.then((blobs) => {
+					resolve(blobs[0]);
+				});
+				.catch(reject);
+		}
+		});	
 	}
 
 	getDataUrl(filepath) {
 		return new Promise((resolve, reject) => {
-			var blob = getBlob(filepath);
+			this.getBlob(filepath)
+			.then((blob) => {
+				var url = blob.url;
 
-			if (!blob) {
-				reject({msg: 'File not loaded.'});
-			}
+				if (!url) {
+					url = URL.createObjectUrl(blob);
+					blob.url = url;
+				}
 
-			var url = blob.url;
-
-			if (!url) {
-				url = URL.createObjectUrl(blob);
-				blob.url = url;
-			}
-
-			resolve(url);
+				resolve(url);
+			})
+			.catch(reject);
 		});
 	}
 
 	getArrayBuffer(filepath) {
 		return new Promise((resolve, reject) => {
-			var blob = getBlob(filepath);
-
-			if (!blob) {
-				reject({msg: 'File not loaded.'});
-			}
-
-			var buffer = blob.buffer;
-
-			if (buffer) {
-				resolve(buffer);
-			} else {
+			this.getBlob(filepath)
+			.then((blob) => {
 				var reader = new FileReader();
 				reader.onloadend = () => {
-					buffer = reader.result;
+					var buffer = reader.result;
 					//blob.buffer = buffer;
 					resolve(buffer);
 				}
 				reader.onerror = reject;
 
 				reader.readAsArrayBuffer(blob);
-			}
+			})
+			.catch(reject);
 		});
 	}
 
 	getJson(filepath) {
-		throw { msg: 'Not implemented.' };
+		return new Promise((resolve, reject) => {
+			this.getText(filepath)
+			.then((text) => {
+				try {
+					var json = JSON.parse(text);
+					resolve(json);	
+				} catch (err) {
+					reject(err);
+				}
+			})
+			.catch(reject);
+		});
+	}
+
+	getText(filepath) {
+		return new Promise((resolve, reject) => {
+			this.getBlob(filepath)
+			.then((blob) => {
+				var reader = new FileReader();
+				reader.onloadend = () => {
+					var text = reader.result;
+					//blob.buffer = buffer;
+					resolve(text);
+				}
+				reader.onerror = reject;
+
+				reader.readAsText(blob);
+			})
+			.catch(reject);
+		});
 	}
 
 	setFile(filepath, blob) {

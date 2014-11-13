@@ -19,7 +19,7 @@ class SpriteManager {
 		this.sprites = {};
 	}
 
-	loadSprites(...spritePaths) {
+	load(...spritePaths) {
 		return Promise.all(spritePaths.map((spritePath) => {
 			return new Promise((resolve, reject) => {
 				files.getDataUrl(spritePath).then((url) => {

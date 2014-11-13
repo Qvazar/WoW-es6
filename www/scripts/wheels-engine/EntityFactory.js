@@ -1,10 +1,17 @@
 import Entity from './Entity';
+import files from 'di/files';
 
 class EntityFactory {
 	constructor(componentsCfg) {
 		this.entityPrototypes = {};
 
 		this.registerComponents(componentsCfg);
+	}
+
+	loadPrototypes(cfgFile) => {
+		return files.getJson(cfgFile).then((cfg) => {
+
+		});
 	}
 
 	registerComponents(namedComponents) {
