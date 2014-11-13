@@ -1,6 +1,5 @@
-import config from './config';
-
-var files = config.files;
+import ProgressPromise from './ProgressPromise';
+import files from 'di/files';
 
 class Sprite {
 	constructor(url, width, height) {
@@ -20,26 +19,44 @@ class SpriteManager {
 	}
 
 	load(...spritePaths) {
-		return Promise.all(spritePaths.map((spritePath) => {
-			return new Promise((resolve, reject) => {
-				files.getDataUrl(spritePath).then((url) => {
-					var image = document.createElement('img');
-					image.onload = () => {
-						var sprite = new Sprite(url, image.width, image.height);
-						this.sprites[spritePath] = sprite;
-						resolve(sprite);
-					};
-					image.onerror = reject;
+		if (spritePaths.length === 0) {
+			return Promise.resolve();
+		}
 
-					image.src = url;
-				});
-			});
-		}));
+		function loadSprite(spritePath) {
+			var sprite = this.sprites[spritePath];
+
+			if (sprite) {
+				return Promise.resolve(sprite);
+			} else {
+				return new ProgressPromise((resolve, reject, progress) => {
+					return files.getDataUrl(spritePath).then((url) => {
+						var image = document.createElement('img');
+						image.addEventListener('load', () => {
+							var sprite = new Sprite(url, image.width, image.height);
+							this.sprites[spritePath] = sprite;
+							resolve(sprite);
+						};
+						image.addEventListener('progress', (e) => progress(Object.create(e, { url: spritePath })));
+						image.addEventListener('error', reject);
+
+						image.src = url;
+					});
+				});			
+			}
+		}
+
+		if (spritePaths.length === 1) {
+			return loadSprite(spritePaths[0]);
+		} else {
+			return spritePaths.map(loadSprite);
+		}
+
+		
+		});
 	}
 
 	getSprite(spritePath) {
-		var sprite = this.sprites[spritePath];
-		// TODO logging
-		return sprite;
+		return this.sprites[spritePath];
 	}
 }

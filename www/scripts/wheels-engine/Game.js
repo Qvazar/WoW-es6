@@ -27,6 +27,7 @@ class Game {
 
 		updateArgs.frequency = this.settings.updateFreq;
 		updateArgs.step = 0;
+		updateArgs.gametime = 0;
 
 		renderArgs.step = 0;
 
@@ -36,6 +37,8 @@ class Game {
 			var updateCount = Math.floor((now - lastUpdateTime) / updateDeltaMs);
 			while (updateCount-- > 0) {
 				updateArgs.step += 1;
+				updateArgs.gametime = updateArgs.frequency * updateArgs.step;
+
 				console.log('Update step ' + updateArgs.step);
 				this.update(updateArgs);
 				lastUpdateTime = now;

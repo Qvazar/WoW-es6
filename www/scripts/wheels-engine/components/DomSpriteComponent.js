@@ -1,9 +1,7 @@
 import Component from './Component';
 import Transformation from '../Transformation';
 import css from '../css';
-import config from '../config';
-
-var sprites = config.sprites;
+import sprites from 'di/sprites';
 
 var ELEMENT_CLASS = 'dom-sprite-component';
 css.createStyle(ELEMENT_CLASS, '')
@@ -11,7 +9,6 @@ css.createStyle(ELEMENT_CLASS, '')
 class DomSpriteComponent extends Component {
 	/**
 	 * settings: {
-	 *	element: A HTML element, string, or a function for creating the HTML element.
 	 *	sprites: The sprite names to animate through
 	 *	css: css attributes to apply
 	 *	cssClass: space-delimited list of css classes to apply
@@ -50,25 +47,7 @@ class DomSpriteComponent extends Component {
 	}
 
 	createElement() {
-		var e,
-			settingsElement = this.settings.element;
-
-		switch (typeof(settingsElement)) {
-			case 'string':
-				var tmp = document.createElement('div');
-				tmp.insertAdjacentHTML('beforeend', settingsElement);
-				e = tmp.firstChild;
-			break;
-			case 'function':
-				e = settingsElement();
-			break;
-			case 'undefined':
-				e = document.createElement('div');
-			break;
-			default:
-				e = settingsElement;
-			break;
-		}
+		var e = document.createElement('img');
 
 		e.classList.add(ELEMENT_CLASS);
 
@@ -129,9 +108,9 @@ class DomSpriteComponent extends Component {
 
 		this.spriteIndex = (spriteIndex + 1) % this.settings.sprites.length;
 
-		css.setProperty(e, 'background-image', `url(${sprite.url})`);
-		css.setProperty(e, 'width', sprite.width);
-		css.setProperty(e, 'height', sprite.height);
+		e.src = sprite.url;
+		css.setProperty(e, 'margin-left', sprite.width * -0.5);
+		css.setProperty(e, 'margin-top', sprite.width * -0.5);
 	}
 
 	render(args) {

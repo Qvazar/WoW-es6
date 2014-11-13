@@ -1,5 +1,5 @@
 import Component from './Component';
-import config from '../config';
+import audio from 'di/audio';
 
 class SoundOnEventComponent extends Component {
 
@@ -7,6 +7,7 @@ class SoundOnEventComponent extends Component {
 		this.settings = Object.freeze(settings);
 		this.play = this.play.bind(this);
 		this.stop = this.stop.bind(this);
+		this.sound = audio.getSound(this.settings.sound);
 	}
 
 	init(scene, entity) {
@@ -17,14 +18,20 @@ class SoundOnEventComponent extends Component {
 
 	dispose() {
 		this.entity.msgbus.off(this.settings.event, this.play);
+		this.sound.dispose();
+		this.sound = null;
 		super();
 	}
 
 	play() {
-		config.soundManager.play(
-			this.settings.sound,
-			this.settings.volume,
-			this.entity.transformation);
+		var snd = this.sound;
+		snd.volume = this.settings.volume;
+		snd.position = this.entity.transformation;
+		return this.sound.play();
+	}
+
+	stop() {
+		this.sound.stop();
 	}
 }
 

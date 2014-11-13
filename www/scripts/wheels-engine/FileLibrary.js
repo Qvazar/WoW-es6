@@ -14,86 +14,47 @@ class FileLibrary {
 	}
 
 	getBlob(filepath) {
-		return new Promise((resolve, reject) => {
-			var blob = this.files[filepath];
-
-			if (blob) {
-				resolve(blob);
-			} else {
-				this.loadFiles(filepath)
-				.then((blobs) => {
-					resolve(blobs[0]);
-				});
-				.catch(reject);
-		}
-		});	
+		return this.files[filepath];
 	}
 
 	getDataUrl(filepath) {
-		return new Promise((resolve, reject) => {
-			this.getBlob(filepath)
-			.then((blob) => {
-				var url = blob.url;
+		var blob = this.getBlob(filepath);
+		var url = blob.url;
 
-				if (!url) {
-					url = URL.createObjectUrl(blob);
-					blob.url = url;
-				}
+		if (!url) {
+			url = URL.createObjectUrl(blob);
+			blob.url = url;
+		}
 
-				resolve(url);
-			})
-			.catch(reject);
-		});
+		return url;
 	}
 
 	getArrayBuffer(filepath) {
-		return new Promise((resolve, reject) => {
-			this.getBlob(filepath)
-			.then((blob) => {
-				var reader = new FileReader();
-				reader.onloadend = () => {
-					var buffer = reader.result;
-					//blob.buffer = buffer;
-					resolve(buffer);
-				}
-				reader.onerror = reject;
+		return new Promise((resolve, reject) {
+			var blob = this.getBlob(filepath);
+			var reader = new FileReader();
 
-				reader.readAsArrayBuffer(blob);
-			})
-			.catch(reject);
+			reader.addEventListener('load', () => resolve(reader.result));
+			reader.addEventListener('error', reject);
+
+			reader.readAsArrayBuffer(blob);
 		});
 	}
 
 	getJson(filepath) {
-		return new Promise((resolve, reject) => {
-			this.getText(filepath)
-			.then((text) => {
-				try {
-					var json = JSON.parse(text);
-					resolve(json);	
-				} catch (err) {
-					reject(err);
-				}
-			})
-			.catch(reject);
-		});
+		return this.getText(filepath)
+			.then((text) => JSON.parse(text));
 	}
 
 	getText(filepath) {
-		return new Promise((resolve, reject) => {
-			this.getBlob(filepath)
-			.then((blob) => {
-				var reader = new FileReader();
-				reader.onloadend = () => {
-					var text = reader.result;
-					//blob.buffer = buffer;
-					resolve(text);
-				}
-				reader.onerror = reject;
+		return new Promise((resolve, reject) {
+			var blob = this.getBlob(filepath);
+			var reader = new FileReader();
 
-				reader.readAsText(blob);
-			})
-			.catch(reject);
+			reader.addEventListener('load', () => resolve(reader.result));
+			reader.addEventListener('error', reject);
+
+			reader.readAsText(blob);
 		});
 	}
 
@@ -101,42 +62,55 @@ class FileLibrary {
 		this.files[filepath] = blob;
 	}
 
-	loadFiles(...filepaths) {
-		return Promise.all(filepaths.map((filepath) => {
-			return Ajax.getBlob(filepath)
-				.then((blob) => {
-					this.setFile(filepath, blob);
-				});
-		}));
+	loadFile(...filepaths) {
+		if (filepaths.length === 0) {
+			return Promise.resolve();
+		}
+
+		function doLoad(filepath) {
+			if (this.files[filepath]) {
+				return Promise.resolve(this.files[filepath]);
+			} else {
+				return Ajax.getBlob(filepath)
+					.then((blob) => {
+						this.setFile(filepath, blob);
+						return blob;
+					});
+			}			
+		}
+
+		if (filepaths.length === 1) {
+			return doLoad(filepaths[0]);
+		} else {
+			return filepaths.map(doLoad);
+		}
 	}
 
 	loadPackages(...packagePaths) {
-		return Promise.all(packagePaths.map((packagePath) => {
-			return new Promise((resolve, reject) => {
+		return packagePaths.map((packagePath) => {
 
-				Ajax.getJson(packagePath + '.map.json')
-					.then((packageDesc) => {
+			return Ajax.getJson(packagePath + '.map.json')
+				.then((packageDesc) => {
 
-						Ajax.getBlob(packagePath + '.dat')
-							.then((blob) => {
+					return Ajax.getBlob(packagePath + '.dat')
+						.then((blob) => {
+							var r = {},
+								files = packageDesc.files;
 
-								for (var filepath in packageDesc.files) if (packageDesc.files.hasOwnProperty(filepath)) {
-									var fileDesc = packageDesc.files[filepath],
-										index = fileDesc.index,
-										length = fileDesc.length;
+							for (var filepath in files) if files.hasOwnProperty(filepath)) {
+								var fileDesc = files[filepath],
+									index = fileDesc.index,
+									length = fileDesc.length,
+									fileBlob = blob.slice(index, index + length);
 
-									this.setFile(filepath, blob.slice(index, index + length));
-								}
+								this.setFile(filepath, fileBlob);
+								r[filepath] = fileBlob;
+							}
 
-								resolve();
-							})
-							.catch(reject);
-
-					})
-					.catch(reject);
-
-			});
-		}));
+							return r;
+						})
+				})
+		});
 	}
 }
 

@@ -6,6 +6,8 @@ class Transformation {
 		this.__y = y || 0;
 		this.__r = r || 0;
 		this.__s = s || 1;
+		
+		Object.seal(this);
 	}
 
 	get x() { return this.__x; };

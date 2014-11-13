@@ -12,6 +12,8 @@ class Sound {
 		this.volume = 1;
 		this.position = Transformation.create();
 		this.loop = false;
+		
+		this.stop = noop;
 	}
 
 	dispose() {
@@ -38,8 +40,8 @@ class Sound {
 				pannerNode.setPosition(this.position.x, this.position.y, 0);
 			}
 
-			bufferSourceNode.connect(gain);
-			gainNode.connect(panner);
+			bufferSourceNode.connect(gainNode);
+			gainNode.connect(pannerNode);
 			pannerNode.connect(this.destination);
 
 			bufferSourceNode.onended = () => {
@@ -56,8 +58,6 @@ class Sound {
 			bufferSourceNode.start();
 		});
 	}
-
-	stop: noop
 }
 
 Sound.create = createObjectPool(Sound);
@@ -87,14 +87,17 @@ class SoundManager {
 	}
 
 	load(...soundFiles) {
-		return Promise.all(soundFiles.map((soundFile) => {
-			return new Promise((resolve, reject) => {
+		if (soundFiles.length === 0) {
+			return Promise.resolve();
+		}
 
-				if (this.audioBuffers[soundFile]) {
-					resolve(Sound.create(this.audioBuffers[soundFile], this.context, this.destination));
-				} else {
-					files.getArrayBuffer(soundFile + '.mp3')
-						.then((arrayBuffer) => {
+		function loadSound(soundFile) {
+			if (this.audioBuffers[soundFile]) {
+				return Promise.resolve(Sound.create(this.audioBuffers[soundFile], this.context, this.destination));
+			} else {
+				return files.getArrayBuffer(soundFile + '.mp3')
+					.then((arrayBuffer) => {
+						return new Promise((resolve, reject) {
 
 							this.context.decodeAudioData(
 								arrayBuffer,
@@ -105,18 +108,28 @@ class SoundManager {
 								},
 								reject);
 
-						})
-						.catch(reject);
-				}
-			});
-		}));
+						});
+					})
+			}			
+		}
+
+		if (soundFiles.length === 1) {
+			return loadSound(soundFiles[0]);
+		} else {
+			return soundFiles.map(loadSound);
+		}
+	}
+
+	getSound(soundFile) {
+		return Sound.create(this.audioBuffers[soundFile], this.context, this.destination);
 	}
 
 	play(soundFile, volume, position) {
-		var sound = this.getSound(soundFile);
-		sound.volume = volume;
-		sound.position = position;
-		return sound.play().then(() => sound.dispose());
+		return this.getSound(soundFile).then((sound) => {
+			sound.volume = volume;
+			sound.position = position;
+			return sound.play().then(() => sound.dispose());
+		});
 	}
 }
 

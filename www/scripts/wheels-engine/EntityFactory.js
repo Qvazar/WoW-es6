@@ -8,9 +8,9 @@ class EntityFactory {
 		this.registerComponents(componentsCfg);
 	}
 
-	loadPrototypes(cfgFile) => {
+	loadPrototypes(cfgFile) {
 		return files.getJson(cfgFile).then((cfg) => {
-
+			//TODO
 		});
 	}
 
