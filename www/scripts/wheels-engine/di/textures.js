@@ -1,6 +1,6 @@
-import SpriteManager from '../SpriteManager';
+import TextureManager from '../TextureManager';
 
-var instance = SpriteManager.create();
+var instance = TextureManager.create();
 
 export default instance;
 export const setup = (...images) => instance.load(...images);
