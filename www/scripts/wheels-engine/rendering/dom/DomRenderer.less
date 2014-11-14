@@ -1,0 +1,13 @@
+.dom-renderer-view {
+	width:100%;
+	height:100%;
+	overflow: hidden;
+
+	.dom-renderer-root {
+		transition:transform 500ms;
+		transform-style:preserve-3d;
+		transform:translate3d(0, 0, 0);
+		will-change:transform;
+		perspective:1000px;
+	}
+}

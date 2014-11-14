@@ -22,17 +22,19 @@ class Game {
 		var updateArgs = this.__updateArgs,
 			renderArgs = this.__renderArgs,
 			updateDeltaMs = 1000 / this.settings.updateFreq,
-			now = Date.now(),
-			lastUpdateTime = now;
+			startTime = performance.now(),
+			lastUpdateTime = startTime,
+			lastRenderTime = startTime;
 
 		updateArgs.frequency = this.settings.updateFreq;
 		updateArgs.step = 0;
 		updateArgs.gametime = 0;
 
 		renderArgs.step = 0;
+		renderArgs.gametime = 0;
 
 		heart.onPulse(() => {
-			now = Date.now();
+			now = performance.now();
 
 			var updateCount = Math.floor((now - lastUpdateTime) / updateDeltaMs);
 			while (updateCount-- > 0) {
@@ -45,6 +47,9 @@ class Game {
 			}
 
 			renderArgs.step += 1;
+			renderArgs.delta = (now - lastRenderTime) / 1000;
+			renderArgs.time = now / 1000;
+			lastRenderTime = now;
 			console.log('Render step ' + renderArgs.step);
 
 			this.render(renderArgs);

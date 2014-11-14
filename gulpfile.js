@@ -10,6 +10,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     spawn = require('gulp-spawn'),
     rename = require('gulp-rename'),
+    concat = require('gulp-concat'),
     concatBinary = require('../gulp-concat-binary'),
     filter = require('gulp-filter'),
     gzip = require('gulp-gzip'),
@@ -169,10 +170,11 @@ gulp.task('js', function() {
 });
 
 gulp.task('css', function() {
-    return gulp.src('www/style/main.less')
+    return gulp.src(['www/style/main.less', 'www/scripts/**/*.less'])
         .pipe(sourcemaps.init())
         .pipe(less({ paths: [] }))
         .pipe(autoprefixer())
+        .pipe(concat())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest.dev.css))
         .pipe(minifyCss())
