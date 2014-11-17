@@ -29,7 +29,7 @@ class DomRenderer {
 		this.__viewTransformation = Transformation.create();
 	}
 
-	get domElement {
+	get domElement() {
 		return this.__viewElement;
 	}
 

@@ -1,5 +1,5 @@
 import ProgressPromise from './ProgressPromise';
-import files from 'di/files';
+import files from './di/files';
 
 class Texture {
 	constructor(url, width, height) {
@@ -36,7 +36,7 @@ class TextureManager {
 						var texture = new Texture(url, image.width, image.height);
 						this.textures[texturePath] = texture;
 						resolve(texture);
-					};
+					});
 					image.addEventListener('progress', (e) => progress(Object.create(e, { url: texturePath })));
 					image.addEventListener('error', reject);
 
@@ -50,12 +50,13 @@ class TextureManager {
 		} else {
 			return texturePaths.map(loadTexture);
 		}
-
-		
-		});
 	}
 
 	getTexture(texturePath) {
 		return this.textures[texturePath];
 	}
 }
+
+TextureManager.create = (...args) => new TextureManager(...args);
+
+export default TextureManager;

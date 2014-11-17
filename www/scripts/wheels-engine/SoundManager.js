@@ -1,4 +1,4 @@
-import files from 'di/files';
+import files from './di/files';
 import createObjectPool from './ObjectPool';
 import Transformation from './Transformation';
 
@@ -97,7 +97,7 @@ class SoundManager {
 			} else {
 				return files.getArrayBuffer(soundFile + '.mp3')
 					.then((arrayBuffer) => {
-						return new Promise((resolve, reject) {
+						return new Promise((resolve, reject) => {
 
 							this.context.decodeAudioData(
 								arrayBuffer,

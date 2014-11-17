@@ -30,7 +30,7 @@ class FileLibrary {
 	}
 
 	getArrayBuffer(filepath) {
-		return new Promise((resolve, reject) {
+		return new Promise((resolve, reject) => {
 			var blob = this.getBlob(filepath);
 			var reader = new FileReader();
 
@@ -47,7 +47,7 @@ class FileLibrary {
 	}
 
 	getText(filepath) {
-		return new Promise((resolve, reject) {
+		return new Promise((resolve, reject) => {
 			var blob = this.getBlob(filepath);
 			var reader = new FileReader();
 
@@ -97,7 +97,7 @@ class FileLibrary {
 							var r = {},
 								files = packageDesc.files;
 
-							for (var filepath in files) if files.hasOwnProperty(filepath)) {
+							for (var filepath in files) if (files.hasOwnProperty(filepath)) {
 								var fileDesc = files[filepath],
 									index = fileDesc.index,
 									length = fileDesc.length,

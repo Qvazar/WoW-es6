@@ -35,7 +35,7 @@ class Game {
 		renderArgs.gametime = 0;
 
 		heart.onPulse(() => {
-			now = performance.now();
+			var now = performance.now();
 
 			var updateCount = Math.floor((now - lastUpdateTime) / updateDeltaMs);
 			while (updateCount-- > 0) {

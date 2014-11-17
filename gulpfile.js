@@ -174,7 +174,7 @@ gulp.task('css', function() {
         .pipe(sourcemaps.init())
         .pipe(less({ paths: [] }))
         .pipe(autoprefixer())
-        .pipe(concat())
+        .pipe(concat('style.css'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest.dev.css))
         .pipe(minifyCss())
