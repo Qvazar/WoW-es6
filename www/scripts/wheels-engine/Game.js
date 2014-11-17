@@ -1,4 +1,5 @@
 import {create as msgbusFactory} from './MessageBus';
+import renderer from './di/renderer';
 
 class Game {
 	// settings: {
@@ -64,6 +65,7 @@ class Game {
 
 	render(args) {
 		this.__scenes.forEach((s) => s.render(args));
+		renderer.render(args);
 	}
 
 	pushScene(scene) {
@@ -86,6 +88,10 @@ class Game {
 		if (newScene) {
 			newScene.enter();
 		}
+	}
+
+	get viewportElement() {
+		return renderer.domElement;
 	}
 }
 

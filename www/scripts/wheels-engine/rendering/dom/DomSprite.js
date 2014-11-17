@@ -72,7 +72,7 @@ class DomSprite {
 				}
 
 				if (newTexture.height != prevTexture.height) {
-					setAttrs['width'] = newTexture.width;
+					setAttrs['height'] = newTexture.height;
 				}
 			}
 
