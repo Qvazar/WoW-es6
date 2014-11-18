@@ -4,35 +4,29 @@ import files from 'di/files';
 class EntityFactory {
 	constructor(componentsCfg) {
 		this.entityPrototypes = {};
-
-		this.registerComponents(componentsCfg);
 	}
 
 	loadPrototypes(cfgFile) {
-		return files.getJson(cfgFile).then((cfg) => {
-			//TODO
-		});
-	}
+		function loadEntity(entityCfg) {
+			var e = Entity.create();
+			e.addComponents(entityCfg.components);
 
-	registerComponents(namedComponents) {
-		if (!namedComponents) {
-			throw { msg: "!namedComponents" };
-		}
-
-		for (cName in namedComponents) if (namedComponents.hasOwnProperty(cName)) {
-			var component = namedComponents[cName];
-
-			for (var eTypeName of component.appliesTo) {
-				var proto = this.getPrototype(eTypeName);
-
-				if (!proto) {
-					proto = Entity.create();
-					this.addPrototype(eTypeName, proto);
-				}
-
-				proto.addComponents(name, component);
+			var childEntities = {};
+			for (var cen in entityCfg.entities) {
+				var ce = loadEntity(entityCfg.entities[cen]);
+				childEntities[cen] = ce;
 			}
+			e.addEntities(childEntities);
+
+			return e;
 		}
+
+		return files.getJson(cfgFile).then((cfg) => {
+			for (var eName in cfg) if (cfg.hasOwnProperty(eName)) {
+				var e = loadEntity(cfg[eName]);
+				this.addPrototype(eName, e);
+			}
+		});
 	}
 
 	create(entityTypeName) {

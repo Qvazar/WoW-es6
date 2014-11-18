@@ -7,7 +7,7 @@ export default {
 	"222": {
 		"components": {
 			"descriptor": DescriptorComponent.create("222"),
-			"sprite": DomSpriteComponent.create({"sprite": '222-body', "css": {"z-index": 0} })
+			"sprite": DomSpriteComponent.create({"sprite": '222/222-body', "css": {"z-index": 0} })
 		},
 		"entities": {
 			"turret": {
