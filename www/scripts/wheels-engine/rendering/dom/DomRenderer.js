@@ -36,6 +36,7 @@ class DomRenderer {
 	get viewTransformation() { return this.__viewTransformation; }
 
 	set viewTransformation(value) {
+		this.__viewTransformation.dispose();
 		this.__viewTransformation = value;
 		css.setTransform(this.__rootElement, value);
 	}

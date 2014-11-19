@@ -62,11 +62,7 @@ class FileLibrary {
 		this.files[filepath] = blob;
 	}
 
-	loadFile(...filepaths) {
-		if (filepaths.length === 0) {
-			return Promise.resolve();
-		}
-
+	loadFiles(...filepaths) {
 		function doLoad(filepath) {
 			if (this.files[filepath]) {
 				return Promise.resolve(this.files[filepath]);
@@ -79,11 +75,7 @@ class FileLibrary {
 			}			
 		}
 
-		if (filepaths.length === 1) {
-			return doLoad(filepaths[0]);
-		} else {
-			return filepaths.map(doLoad);
-		}
+		return filepaths.map(doLoad);
 	}
 
 	loadPackages(...packagePaths) {

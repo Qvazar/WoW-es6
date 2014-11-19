@@ -45,11 +45,7 @@ class TextureManager {
 			}
 		}
 
-		if (texturePaths.length === 1) {
-			return loadTexture(texturePaths[0]);
-		} else {
-			return texturePaths.map(loadTexture);
-		}
+		return texturePaths.map(loadTexture);
 	}
 
 	getTexture(texturePath) {

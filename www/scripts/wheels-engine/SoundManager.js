@@ -87,10 +87,6 @@ class SoundManager {
 	}
 
 	load(...soundFiles) {
-		if (soundFiles.length === 0) {
-			return Promise.resolve();
-		}
-
 		function loadSound(soundFile) {
 			if (this.audioBuffers[soundFile]) {
 				return Promise.resolve(Sound.create(this.audioBuffers[soundFile], this.context, this.destination));
@@ -113,11 +109,7 @@ class SoundManager {
 			}			
 		}
 
-		if (soundFiles.length === 1) {
-			return loadSound(soundFiles[0]);
-		} else {
-			return soundFiles.map(loadSound);
-		}
+		return soundFiles.map(loadSound);
 	}
 
 	getSound(soundFile) {

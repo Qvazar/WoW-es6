@@ -1,5 +1,7 @@
+import Camera from './Camera';
 import {create as msgbusFactory} from './MessageBus';
 import renderer from './di/renderer';
+import setupDi from './di/setup';
 
 class Game {
 	// settings: {
@@ -12,6 +14,7 @@ class Game {
 		this.__scenes = [];
 		this.__updateArgs = {};
 		this.__renderArgs = {};
+		this.camera = Camera.create(renderer);
 	}
 
 	start() {
@@ -42,7 +45,7 @@ class Game {
 				updateArgs.step += 1;
 				updateArgs.gametime = updateArgs.frequency * updateArgs.step;
 
-				console.log('Update step ' + updateArgs.step);
+				//console.log('Update step ' + updateArgs.step);
 				this.update(updateArgs);
 				lastUpdateTime = now;
 			}
@@ -51,7 +54,7 @@ class Game {
 			renderArgs.delta = (now - lastRenderTime) / 1000;
 			renderArgs.time = now / 1000;
 			lastRenderTime = now;
-			console.log('Render step ' + renderArgs.step);
+			//console.log('Render step ' + renderArgs.step);
 
 			this.render(renderArgs);
 		});
@@ -92,6 +95,10 @@ class Game {
 
 	get viewportElement() {
 		return renderer.domElement;
+	}
+
+	setup(...args) {
+		setupDi(...args);
 	}
 }
 

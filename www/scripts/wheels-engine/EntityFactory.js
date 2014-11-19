@@ -6,7 +6,7 @@ class EntityFactory {
 		this.entityPrototypes = {};
 	}
 
-	loadPrototypes(cfgFile) {
+	loadPrototypes(...cfgFiles) {
 		function loadEntity(entityCfg) {
 			var e = Entity.create();
 			e.addComponents(entityCfg.components);
@@ -21,11 +21,13 @@ class EntityFactory {
 			return e;
 		}
 
-		return files.getJson(cfgFile).then((cfg) => {
-			for (var eName in cfg) if (cfg.hasOwnProperty(eName)) {
-				var e = loadEntity(cfg[eName]);
-				this.addPrototype(eName, e);
-			}
+		return cfgFiles.map((cfgFile) => {
+			return files.getJson(cfgFile).then((cfg) => {
+				for (var eName in cfg) if (cfg.hasOwnProperty(eName)) {
+					var e = loadEntity(cfg[eName]);
+					this.addPrototype(eName, e);
+				}
+			});
 		});
 	}
 

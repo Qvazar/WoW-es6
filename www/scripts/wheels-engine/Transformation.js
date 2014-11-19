@@ -20,28 +20,28 @@ class Transformation {
 	}
 
 	add(transformation) {
-		var x = this.x += transformation.x,
-			y = this.y += transformation.y,
-			r = this.r += transformation.r,
-			s = this.s *= transformation.s;
+		var x = this.x + transformation.x,
+			y = this.y + transformation.y,
+			r = this.r + transformation.r,
+			s = this.s * transformation.s;
 
 		return Transformation.create(x, y, r, s);
 	}
 
 	subtract(transformation) {
-		var x = this.x -= transformation.x,
-			y = this.y -= transformation.y,
-			r = this.r -= transformation.r,
-			s = this.s /= transformation.s;
+		var x = this.x - transformation.x,
+			y = this.y - transformation.y,
+			r = this.r - transformation.r,
+			s = this.s / transformation.s;
 
 		return Transformation.create(x, y, r, s);		
 	}
 
 	multiply(multiplier) {
-		var x = this.x *= multiplier,
-			y = this.y *= multiplier,
-			r = this.r *= multiplier,
-			s = this.s *= multiplier;
+		var x = this.x * multiplier,
+			y = this.y * multiplier,
+			r = this.r * multiplier,
+			s = this.s * multiplier;
 
 		return Transformation.create(x, y, r, s);
 	}
