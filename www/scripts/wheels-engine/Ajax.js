@@ -1,5 +1,22 @@
 import ProgressPromise from './ProgressPromise';
 
+function doRequest(method, url, responseType, data) {
+	return new ProgressPromise((resolve, reject, progress) => {
+		var request = new XMLHttpRequest();
+		request.responseType = responseType;
+
+		var onError = () => { reject({ status: request.status, text: request.statusText }); };
+
+		request.addEventListener('load', () => { resolve(request.response); });
+		request.addEventListener('error', onError);
+		request.addEventListener('abort', onError);
+		request.addEventListener('progress', (e) => progress(Object.create(e, { url: { value: url } })) );
+
+		request.open(method, url, true);
+		request.send(data);
+	});
+}
+
 export default {
 	get(responseType, ...urls) {
 		if (urls.length === 0) {
@@ -7,18 +24,7 @@ export default {
 		}
 
 		function loadFile(url) {
-			return new ProgressPromise((resolve, reject, progress) => {
-				var request = new XMLHttpRequest();
-				request.responseType = responseType;
-
-				request.addEventListener('load', () => { resolve(request.response); });
-				request.addEventListener('error', () => { reject({ status: request.status, text: request.statusText }); });
-				request.addEventListener('abort', () => { reject({ status: request.status, text: request.statusText }); });
-				request.addEventListener('progress', (e) => progress(Object.create(e, { url: { value: url } })) );
-
-				request.open('GET', url, true);
-				request.send();
-			});						
+			return doRequest('GET', responseType, url);
 		}
 
 		if (urls.length === 1) {
@@ -26,6 +32,10 @@ export default {
 		} else {
 			return urls.map(loadFile);
 		}
+	},
+
+	send(data, url, responseType) {
+		return doRequest('POST', url, responseType, data);
 	},
 
 	getArrayBuffer(...urls) {
